@@ -17,16 +17,23 @@ class Application(Text):
     def __init__(self, master):
         Text.__init__(self, master)
 
-
-    #---------- buttons ----------
+        #---------- buttons ----------
 
         self.add_button = Button(master, text='dodaj sprzęt', command=self.add_equip, )
         self.quit = Button(master, text='Wyjście', command=master.destroy)
 
-        self.add_button.grid(column=0, row=0, columnspan=2, ipadx=5)
-        self.quit.grid(column=3, row= 0, sticky=E)
+        self.add_button.grid(column=0, row=0, columnspan=2, rowspan=1)
+        self.quit.grid(column=0, row=5, columnspan=2, rowspan=1)
 
-    #---------- check buttons ----------
+        # ---------- label ----------
+
+        self.show_area = ttk.Label(master, text='Rejon:')
+        self.sort = ttk.Label(master, text='Sortuj wg:')
+
+        self.show_area.grid(column=0, row=1, columnspan=2)
+        self.sort.grid(column=0, row=3, columnspan=2)
+
+        #---------- check buttons ----------
 
         self.area1_var = IntVar()
         self.area1 = tk.Checkbutton(master, text='Rejon 1', variable=self.area1_var)
@@ -34,33 +41,22 @@ class Application(Text):
         self.area2_var = IntVar()
         self.area2 = tk.Checkbutton(master, text='Rejon 2', variable=self.area2_var)
 
-        self.area1.grid(column=0, row=2)
-        self.area2.grid(column=1, row=2)
+        self.area1.grid(column=0, row=2, columnspan=1, rowspan=1)
+        self.area2.grid(column=1, row=2, columnspan=1, rowspan=1)
 
-
-    #---------- radio buttons ----------
+        #---------- radio buttons ----------
 
         self.num = tk.Radiobutton(master, text='numeru')
         self.localization = tk.Radiobutton(master, text='lokalizacji',)
 
-        self.num.grid(column=0, row=4)
-        self.localization.grid(column=1, row=4)
+        self.num.grid(column=0, row=4, columnspan=1, rowspan=1)
+        self.localization.grid(column=1, row=4, columnspan=1, rowspan=1)
 
+        #---------- treeview ----------
 
-    #---------- label ----------
-        self.show_area = ttk.Label(master, text='Rejon:')
-        self.sort = ttk.Label(master, text='Sortuj wg:')
+        self.tree = ttk.Treeview(master, height=30)
 
-
-
-        self.show_area.grid(column=0, row=1, columnspan=2)
-        self.sort.grid(column=0, row=3, columnspan=2)
-
-    #---------- treeview ----------
-
-        self.tree = ttk.Treeview(master)
-
-        self.tree['columns']=('one', 'two', 'three', 'four', 'five', 'six')
+        self.tree['columns'] = ('one', 'two', 'three', 'four', 'five', 'six')
         self.tree.column('one', width=100)
         self.tree.column('two', width=100)
         self.tree.column('three', width=100)
@@ -82,7 +78,7 @@ class Application(Text):
     #tree.insert(id2, 'end', 'dir 2', text='sub dir 2', values=('2A', '2B'))
 
 
-        self.tree.grid(column=2, row=1, columnspan=10, rowspan=10)
+        self.tree.grid(column=2, row=0, columnspan=2, rowspan=20)
 
 
     def add_equip(self):
@@ -140,14 +136,14 @@ class Application(Text):
         #---------- add_equip window look ----------
 
         root2 = Tk()
-        root.geometry('1000x1000')
+        root.geometry('800x600')
         root.title('Dodaj Sprzęt')
         c = Add_file(root2)
         root2.mainloop()
 
 #---------- window look options -----------
 root = Tk()
-root.geometry('1100x1100')
+root.geometry('800x600')
 root.title('Gaśnica')
 
 b = Application(root)
