@@ -113,8 +113,8 @@ class Application(Text):
                 self.typeIn_entries = ttk.Combobox(master2, width=10, textvariable=self.typeIn)
                 self.typeIn_entries['values'] = ('proszek', 'płyn')
 
-                self.numEq_entries = ttk.Combobox(master2, width=10, textvariable=self.numEq)
-                self.numEq_entries['values'] = ('z db')
+                self.numEq_entries = StringVar()
+                self.numEq_entries = ttk.Entry(master2, width=10, textvariable=self.numEq)
 
                 self.typeEq_entries.grid(column=1, row=0)
                 self.sizeEq_entries.grid(column=1, row=1)
@@ -124,13 +124,51 @@ class Application(Text):
                 #---------- Buttons ----------
 
                 self.quit = Button(master2, text='Wyjście', command=master2.destroy)
+                self.add = Button(master2, text='Zapisz w bazie', command=self.save_settings)
+
                 self.quit.grid(column=1, row=4, columnspan=2)
+                self.add.grid(column=1, row=5, columnspan=2)
 
 
             #----------destroy button ----------
 
             def master_exit(self):
                 master.destroy()
+
+            #---------- database ----------
+
+
+            def save_settings(self):
+                con = sqlite3.connect('equipment.db')
+                con.row_factory = sqlite3.Row
+                cur = con.cursor()
+
+                cur.execute('DROP TABLE IF EXISTS equipment;')
+
+                cur.execute('''
+                    'CREATE TABLE IF NOT EXISTS equipment(id INTEGER PRIMARY KEY ASC, index TEXT, num TEXT, type TEXT, 
+                    size TEXT, inside TEXT, dateadd TEXT, datecontrol TEXT'')''')
+
+                #---------- adding items ---------
+
+                unix = time.time()
+                type = self.typeEq.get()
+                size = self.sizeEq.get()
+                inside = self.typeIn.get()
+                dateadd = datetime.datetime.fromtimestamp(unix).strftime('%d - %m - %Y')
+                datacontrol = datetime.datetime.fromtimestamp(unix).strftime('%m - %d - %Y')
+                if len(index) == 0 or len(type) == 0 or len(size) == 0 or len(inside) == 0 or len(dateadd) == 0 or len(datacontrol) == 0:
+                    print('Nie wszystkie pola zostały wypełnione prawidłowo, spróbuj ponownie!')
+                    message.showwarning('Nie wszystkie pola zostały wypłnione prawidłowo, spróbuj ponownie!')
+
+                else:
+                    cur.execute(
+                        'INSERT INTO equipment (type, size, inside, dateadd, datacontrol) VALUES (?, ?, ?, ?, ?)',
+                        (type, size, inside, dateadd, datecontrol))
+                    con.commit()
+                    self.box.insert(END, ('Dodano Sprzęt: ' + type + ', ' + size + ', ' + inside +', ' + dateadd + ', '
+                                        + datacontrol +'\n'))
+                    messagebox.showinfo('Pomyślnie dodano sprzęt do bazy danych!')
 
 
         #---------- add_equip window look ----------
