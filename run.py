@@ -6,7 +6,7 @@ from tkinter import ttk
 import tkinter as tk
 import sqlite3
 import time
-#import datatime
+import datetime
 import random
 from tkinter import messagebox
 import subprocess as s
@@ -113,7 +113,7 @@ class Application(Text):
                 self.typeIn_entries = ttk.Combobox(master2, width=10, textvariable=self.typeIn)
                 self.typeIn_entries['values'] = ('proszek', 'płyn')
 
-                self.numEq_entries = StringVar()
+
                 self.numEq_entries = ttk.Entry(master2, width=10, textvariable=self.numEq)
 
                 self.typeEq_entries.grid(column=1, row=0)
@@ -145,13 +145,13 @@ class Application(Text):
 
                 cur.execute('DROP TABLE IF EXISTS equipment;')
 
-                cur.execute('''
-                    'CREATE TABLE IF NOT EXISTS equipment(id INTEGER PRIMARY KEY ASC, index TEXT, num TEXT, type TEXT, 
-                    size TEXT, inside TEXT, dateadd TEXT, datecontrol TEXT'')''')
+                cur.execute(
+                    'CREATE TABLE IF NOT EXISTS equipment(id INTEGER PRIMARY KEY ASC, index TEXT, num TEXT, type TEXT, size TEXT, inside TEXT, dateadd TEXT, datacontrol TEXT)')
 
                 #---------- adding items ---------
 
                 unix = time.time()
+                index = self.numEq.get()
                 type = self.typeEq.get()
                 size = self.sizeEq.get()
                 inside = self.typeIn.get()
@@ -164,12 +164,11 @@ class Application(Text):
                 else:
                     cur.execute(
                         'INSERT INTO equipment (type, size, inside, dateadd, datacontrol) VALUES (?, ?, ?, ?, ?)',
-                        (type, size, inside, dateadd, datecontrol))
+                        (type, size, inside, dateadd, datacontrol))
                     con.commit()
                     self.box.insert(END, ('Dodano Sprzęt: ' + type + ', ' + size + ', ' + inside +', ' + dateadd + ', '
                                         + datacontrol +'\n'))
                     messagebox.showinfo('Pomyślnie dodano sprzęt do bazy danych!')
-
 
         #---------- add_equip window look ----------
 
