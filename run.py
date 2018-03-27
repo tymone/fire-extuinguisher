@@ -19,19 +19,53 @@ class Application(Text):
 
         #---------- buttons ----------
 
-        self.add_button = Button(master, text='dodaj sprzęt', command=self.add_equip, )
+        self.add = Button(master, text='Zapisz w bazie', command=self.save_settings)
         self.quit = Button(master, text='Wyjście', command=master.destroy)
 
-        self.add_button.grid(column=0, row=0, columnspan=2, rowspan=1)
-        self.quit.grid(column=0, row=5, columnspan=2, rowspan=1)
+
+        self.add.grid(column=0, row=14)
+        self.quit.grid(column=1, row=14)
 
         # ---------- label ----------
 
         self.show_area = ttk.Label(master, text='Rejon:')
         self.sort = ttk.Label(master, text='Sortuj wg:')
+        self.add = ttk.Label(master, text='Dodaj sprzęt')
+        self.typeEq = ttk.Label(master, text='Typ gaśnicy: ')
+        self.sizeEq = ttk.Label(master, text='Pojemność: ')
+        self.typeIn = ttk.Label(master, text='rodzaj gaśnicy: ')
+        self.numEq = ttk.Label(master, text='Wybierz numer: ')
 
         self.show_area.grid(column=0, row=1, columnspan=2)
         self.sort.grid(column=0, row=3, columnspan=2)
+        self.add.grid(column=0, row=5, columnspan=2)
+        self.typeEq.grid(column=0, row=6)
+        self.sizeEq.grid(column=0, row=8)
+        self.typeIn.grid(column=0, row=10)
+        self.numEq.grid(column=0, row=12)
+
+        # ---------- Comboboxes ----------
+        self.typeEq = StringVar()
+        self.sizeEq = StringVar()
+        self.typeIn = StringVar()
+        self.numEq = StringVar()
+
+        self.typeEq_entries = ttk.Combobox(master, width=10, textvariable=self.typeEq)
+        self.typeEq_entries['values'] = ('X', 'Z')
+        self.typeEq_entries.current(0)
+
+        self.sizeEq_entries = ttk.Combobox(master, width=10, textvariable=self.sizeEq)
+        self.sizeEq_entries['values'] = ('6', '12')
+
+        self.typeIn_entries = ttk.Combobox(master, width=10, textvariable=self.typeIn)
+        self.typeIn_entries['values'] = ('proszek', 'płyn')
+
+        self.numEq_entries = ttk.Entry(master, width=10, textvariable=self.numEq)
+
+        self.typeEq_entries.grid(column=0, row=7)
+        self.sizeEq_entries.grid(column=0, row=9)
+        self.typeIn_entries.grid(column=0, row=11)
+        self.numEq_entries.grid(column=0, row=13)
 
         #---------- check buttons ----------
 
@@ -80,103 +114,47 @@ class Application(Text):
 
         self.tree.grid(column=2, row=0, columnspan=2, rowspan=20)
 
+    #---------- database ----------
 
-    def add_equip(self):
-        class Add_file(Text):
-            def __init__(self, master2):
-                Text.__init__(self, master2)
+    def save_settings(self):
+        con = sqlite3.connect('equipment.db')
+        con.row_factory = sqlite3.Row
+        cur = con.cursor()
 
-                # ---------- labels ----------
-                self.typeEq = ttk.Label(master2, text='Typ gaśnicy: ')
-                self.sizeEq = ttk.Label(master2, text='Pojemność: ')
-                self.typeIn = ttk.Label(master2, text='rodzaj gaśnicy: ')
-                self.numEq = ttk.Label(master2, text='Wybierz numer: ')
+        cur.execute(
+            'CREATE TABLE IF NOT EXISTS equipment(indeks TEXT, type TEXT, size TEXT, inside TEXT, dateadd TEXT, datacontrol TEXT)')
 
-                self.typeEq.grid(column=0, row=0)
-                self.sizeEq.grid(column=0, row=1)
-                self.typeIn.grid(column=0, row=2)
-                self.numEq.grid(column=0, row=3)
+        # ---------- adding items ---------
 
-                # ---------- Comboboxes ----------
-                self.typeEq = StringVar()
-                self.sizeEq = StringVar()
-                self.typeIn = StringVar()
-                self.numEq = StringVar()
+        unix = datetime.date.today()
+        indeks = self.numEq.get()
+        type = self.typeEq.get()
+        size = self.sizeEq.get()
+        inside = self.typeIn.get()
+        dateadd = datetime.date.today()
+        datacontrol = datetime.date.today()
+        if len(type) == 0 or len(size) == 0 or len(inside) == 0:
+            print('Nie wszystkie pola zostały wypełnione prawidłowo, spróbuj ponownie!')
+            message.showwarning('Nie wszystkie pola zostały wypłnione prawidłowo, spróbuj ponownie!')
 
-                self.typeEq_entries = ttk.Combobox(master2, width=10, textvariable=self.typeEq)
-                self.typeEq_entries['values'] = ('X', 'Z')
-                self.typeEq_entries.current(0)
+        else:
+            cur.execute('INSERT INTO equipment (indeks, type, size, inside, dateadd, datacontrol) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                (indeks, type, size, inside, dateadd, datacontrol))
+            con.commit()
+            self.box.insert(END, ('Dodano Sprzęt: ' + type + ', ' + size + ', ' + inside + ', ' + dateadd + ', '
+                                  + datacontrol + '\n'))
+            messagebox.showinfo('Pomyślnie dodano sprzęt do bazy danych!')
 
-                self.sizeEq_entries = ttk.Combobox(master2, width=10, textvariable=self.sizeEq)
-                self.sizeEq_entries['values'] = ('6', '12')
+        # ---------- textbox to updates ----------
 
-                self.typeIn_entries = ttk.Combobox(master2, width=10, textvariable=self.typeIn)
-                self.typeIn_entries['values'] = ('proszek', 'płyn')
+        self.box = Text(master2, height=15, width=60)
+        self.box.focus_set()
+        self.box.grid(column=2, row=4)
 
+    # ----------destroy button ----------
 
-                self.numEq_entries = ttk.Entry(master2, width=10, textvariable=self.numEq)
-
-                self.typeEq_entries.grid(column=1, row=0)
-                self.sizeEq_entries.grid(column=1, row=1)
-                self.typeIn_entries.grid(column=1, row=2)
-                self.numEq_entries.grid(column=1, row=3)
-
-                #---------- Buttons ----------
-
-                self.quit = Button(master2, text='Wyjście', command=master2.destroy)
-                self.add = Button(master2, text='Zapisz w bazie', command=self.save_settings)
-
-                self.quit.grid(column=1, row=4, columnspan=2)
-                self.add.grid(column=1, row=5, columnspan=2)
-
-
-            #----------destroy button ----------
-
-            def master_exit(self):
-                master.destroy()
-
-            #---------- database ----------
-
-
-            def save_settings(self):
-                con = sqlite3.connect('equipment.db')
-                con.row_factory = sqlite3.Row
-                cur = con.cursor()
-
-                cur.execute('DROP TABLE IF EXISTS equipment;')
-
-                cur.execute(
-                    'CREATE TABLE IF NOT EXISTS equipment(id INTEGER PRIMARY KEY ASC, index TEXT, num TEXT, type TEXT, size TEXT, inside TEXT, dateadd TEXT, datacontrol TEXT)')
-
-                #---------- adding items ---------
-
-                unix = time.time()
-                index = self.numEq.get()
-                type = self.typeEq.get()
-                size = self.sizeEq.get()
-                inside = self.typeIn.get()
-                dateadd = datetime.datetime.fromtimestamp(unix).strftime('%d - %m - %Y')
-                datacontrol = datetime.datetime.fromtimestamp(unix).strftime('%m - %d - %Y')
-                if len(index) == 0 or len(type) == 0 or len(size) == 0 or len(inside) == 0 or len(dateadd) == 0 or len(datacontrol) == 0:
-                    print('Nie wszystkie pola zostały wypełnione prawidłowo, spróbuj ponownie!')
-                    message.showwarning('Nie wszystkie pola zostały wypłnione prawidłowo, spróbuj ponownie!')
-
-                else:
-                    cur.execute(
-                        'INSERT INTO equipment (type, size, inside, dateadd, datacontrol) VALUES (?, ?, ?, ?, ?)',
-                        (type, size, inside, dateadd, datacontrol))
-                    con.commit()
-                    self.box.insert(END, ('Dodano Sprzęt: ' + type + ', ' + size + ', ' + inside +', ' + dateadd + ', '
-                                        + datacontrol +'\n'))
-                    messagebox.showinfo('Pomyślnie dodano sprzęt do bazy danych!')
-
-        #---------- add_equip window look ----------
-
-        root2 = Tk()
-        root.geometry('800x600')
-        root.title('Dodaj Sprzęt')
-        c = Add_file(root2)
-        root2.mainloop()
+    def master_exit(self):
+        master.destroy()
 
 #---------- window look options -----------
 root = Tk()
