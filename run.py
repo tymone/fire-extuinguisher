@@ -19,15 +19,17 @@ class Application(Text):
 
         #---------- buttons ----------
 
+        self.find = Button(master, text='Szukaj', command=self.load_settings)
         self.add = Button(master, text='Zapisz w bazie', command=self.save_settings)
         self.quit = Button(master, text='Wyjście', command=master.destroy)
 
-
-        self.add.grid(column=0, row=14)
-        self.quit.grid(column=1, row=14)
+        self.find.grid(column=0, row=2, columnspan=2)
+        self.add.grid(column=0, row=16)
+        self.quit.grid(column=1, row=16)
 
         # ---------- label ----------
 
+        self.find = ttk.Label(master, text='Wyszukaj:')
         self.show_area = ttk.Label(master, text='Rejon:')
         self.sort = ttk.Label(master, text='Sortuj wg:')
         self.add = ttk.Label(master, text='Dodaj sprzęt')
@@ -36,13 +38,21 @@ class Application(Text):
         self.typeIn = ttk.Label(master, text='rodzaj gaśnicy: ')
         self.numEq = ttk.Label(master, text='Wybierz numer: ')
 
-        self.show_area.grid(column=0, row=1, columnspan=2)
-        self.sort.grid(column=0, row=3, columnspan=2)
-        self.add.grid(column=0, row=5, columnspan=2)
-        self.typeEq.grid(column=0, row=6)
-        self.sizeEq.grid(column=0, row=8)
-        self.typeIn.grid(column=0, row=10)
-        self.numEq.grid(column=0, row=12)
+        self.find.grid(column=0, row=0, columnspan=2)
+        self.show_area.grid(column=0, row=3, columnspan=2)
+        self.sort.grid(column=0, row=5, columnspan=2)
+        self.add.grid(column=0, row=7, columnspan=2)
+        self.typeEq.grid(column=0, row=8, columnspan=2)
+        self.sizeEq.grid(column=0, row=10, columnspan=2)
+        self.typeIn.grid(column=0, row=12, columnspan=2)
+        self.numEq.grid(column=0, row=14, columnspan=2)
+
+        #----------- Entries -----------
+
+        self.findies = StringVar()
+        self.find_entries = tk.Entry(master, textvariable=self.findies)
+
+        self.find_entries.grid(column=0, row=1, columnspan=2)
 
         # ---------- Comboboxes ----------
         self.typeEq = StringVar()
@@ -62,10 +72,10 @@ class Application(Text):
 
         self.numEq_entries = ttk.Entry(master, width=10, textvariable=self.numEq)
 
-        self.typeEq_entries.grid(column=0, row=7)
-        self.sizeEq_entries.grid(column=0, row=9)
-        self.typeIn_entries.grid(column=0, row=11)
-        self.numEq_entries.grid(column=0, row=13)
+        self.typeEq_entries.grid(column=0, row=9, columnspan=2)
+        self.sizeEq_entries.grid(column=0, row=11, columnspan=2)
+        self.typeIn_entries.grid(column=0, row=13, columnspan=2)
+        self.numEq_entries.grid(column=0, row=15, columnspan=2)
 
         #---------- check buttons ----------
 
@@ -75,16 +85,16 @@ class Application(Text):
         self.area2_var = IntVar()
         self.area2 = tk.Checkbutton(master, text='Rejon 2', variable=self.area2_var)
 
-        self.area1.grid(column=0, row=2, columnspan=1, rowspan=1)
-        self.area2.grid(column=1, row=2, columnspan=1, rowspan=1)
+        self.area1.grid(column=0, row=4, columnspan=1, rowspan=1)
+        self.area2.grid(column=1, row=4, columnspan=1, rowspan=1)
 
         #---------- radio buttons ----------
 
         self.num = tk.Radiobutton(master, text='numeru')
         self.localization = tk.Radiobutton(master, text='lokalizacji',)
 
-        self.num.grid(column=0, row=4, columnspan=1, rowspan=1)
-        self.localization.grid(column=1, row=4, columnspan=1, rowspan=1)
+        self.num.grid(column=0, row=6, columnspan=1, rowspan=1)
+        self.localization.grid(column=1, row=6, columnspan=1, rowspan=1)
 
         #---------- treeview ----------
 
@@ -106,27 +116,30 @@ class Application(Text):
         self.tree.heading('five', text='data kontroli')
         self.tree.heading('six', text='data następnej kontroli')
 
-    #tree.insert('', 0, text='line 1', values=('1A', '1B'))
 
-    #id2 = tree.insert('', 1, 'dir2', text='dir 2')
-    #tree.insert(id2, 'end', 'dir 2', text='sub dir 2', values=('2A', '2B'))
+        self.tree.insert('', 0, text='line 1', values=('example'))
+
+        #id2 = tree.insert('', 1, 'dir2', text='dir 2')
+        #tree.insert(id2, 'end', 'dir 2', text='sub dir 2', values=('2A', '2B'))
 
 
         self.tree.grid(column=2, row=0, columnspan=2, rowspan=20)
 
     #---------- database ----------
 
+
+
     def save_settings(self):
         con = sqlite3.connect('equipment.db')
         con.row_factory = sqlite3.Row
         cur = con.cursor()
 
-        cur.execute(
-            'CREATE TABLE IF NOT EXISTS equipment(indeks TEXT, type TEXT, size TEXT, inside TEXT, dateadd TEXT, datacontrol TEXT)')
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS equipment(id INTEGER PRIMARY KEY ASC,
+             indeks TEXT, type TEXT, size TEXT, inside TEXT, dateadd TEXT)""")
 
         # ---------- adding items ---------
 
-        unix = datetime.date.today()
         indeks = self.numEq.get()
         type = self.typeEq.get()
         size = self.sizeEq.get()
@@ -135,21 +148,28 @@ class Application(Text):
         datacontrol = datetime.date.today()
         if len(type) == 0 or len(size) == 0 or len(inside) == 0:
             print('Nie wszystkie pola zostały wypełnione prawidłowo, spróbuj ponownie!')
-            message.showwarning('Nie wszystkie pola zostały wypłnione prawidłowo, spróbuj ponownie!')
+            messagebox.showwarning('Nie wszystkie pola zostały wypłnione prawidłowo, spróbuj ponownie!')
 
         else:
-            cur.execute('INSERT INTO equipment (indeks, type, size, inside, dateadd, datacontrol) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                (indeks, type, size, inside, dateadd, datacontrol))
+            cur.execute('INSERT INTO equipment (indeks, type, size, inside, dateadd) VALUES (?, ?, ?, ?, ?)',
+                (indeks, type, size, inside, dateadd))
             con.commit()
-            self.box.insert(END, ('Dodano Sprzęt: ' + type + ', ' + size + ', ' + inside + ', ' + dateadd + ', '
-                                  + datacontrol + '\n'))
             messagebox.showinfo('Pomyślnie dodano sprzęt do bazy danych!')
 
-        # ---------- textbox to updates ----------
+    def load_settings(self):
+        con = sqlite3.connect('equipment.db')
+        con.row_factory = sqlite3.Row
+        cur = con.cursor()
 
-        self.box = Text(master2, height=15, width=60)
-        self.box.focus_set()
-        self.box.grid(column=2, row=4)
+        findies = self.findies.get()
+        cur.execute('SELECT * FROM equipment WHERE indeks LIKE ?',(findies,))
+
+        equip = cur.fetchall()
+        for item in equip:
+            print(item['indeks'], item['type'], item['size'], item['inside'], item['dateadd'])
+        print()
+
+
 
     # ----------destroy button ----------
 
@@ -158,7 +178,7 @@ class Application(Text):
 
 #---------- window look options -----------
 root = Tk()
-root.geometry('800x600')
+root.geometry('1000x800')
 root.title('Gaśnica')
 
 b = Application(root)
