@@ -12,10 +12,8 @@ from tkinter import messagebox
 import subprocess as s
 
 
-class Application(Text):
-
+class Application():
     def __init__(self, master):
-        Text.__init__(self, master)
 
         #---------- buttons ----------
 
