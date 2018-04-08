@@ -96,32 +96,31 @@ class Application():
 
         #---------- treeview ----------
 
-        self.tree = ttk.Treeview(master, height=30)
+        self.tree = ttk.Treeview(height=30, columns=('Nr. gaśnicy', 'Typ gaśnicy','Pojemność','Środek', 'Rejon', 'lokalizacja', 'data kontroli', 'data następnej kontroli'))
+        self.tree.grid(column=2, row=0, rowspan=20)
+        self.tree.heading('#0', text='Index', anchor=W)
+        self.tree.heading('Nr. gaśnicy', text='Nr. gaśnicy', anchor=W)
+        self.tree.heading('Typ gaśnicy', text='Typ gaśnicy', anchor=W)
+        self.tree.heading('Pojemność', text='Pojemność', anchor=W)
+        self.tree.heading('Środek', text='Środek', anchor=W)
+        self.tree.heading('Rejon', text='Rejon', anchor=W)
+        self.tree.heading('lokalizacja', text='lokalizacja', anchor=W)
+        self.tree.heading('data kontroli', text='data kontroli', anchor=W)
+        self.tree.heading('data następnej kontroli', text='data następnej kontroli', anchor=W)
 
-        self.tree['columns'] = ('one', 'two', 'three', 'four', 'five', 'six')
-        self.tree.column('one', width=100)
-        self.tree.column('two', width=100)
-        self.tree.column('three', width=100)
-        self.tree.column('four', width=100)
-        self.tree.column('five', width=100)
-        self.tree.column('six', width=100)
-
-        self.tree['show'] = 'headings' #delete first column
-        self.tree.heading('one', text='Index')
-        self.tree.heading('two', text='Nr. gaśnicy')
-        self.tree.heading('three', text='Rejon')
-        self.tree.heading('four', text='lokalizacja')
-        self.tree.heading('five', text='data kontroli')
-        self.tree.heading('six', text='data następnej kontroli')
-
-
-        self.tree.insert('', 0, text='line 1', values=('example'))
-
-        #id2 = tree.insert('', 1, 'dir2', text='dir 2')
-        #tree.insert(id2, 'end', 'dir 2', text='sub dir 2', values=('2A', '2B'))
+        self.tree.column('#0', stretch=tk.NO, width=50)
+        self.tree.column('Nr. gaśnicy', stretch=tk.NO, width=70)
+        self.tree.column('Typ gaśnicy', stretch=tk.NO, width=70)
+        self.tree.column('Pojemność', stretch=tk.NO, width=70)
+        self.tree.column('Środek', stretch=tk.NO, width=70)
+        self.tree.column('Rejon', stretch=tk.NO, width=50)
+        self.tree.column('lokalizacja', stretch=tk.YES, minwidth=50, width=300)
+        self.tree.column('data kontroli', stretch=tk.NO, width=150)
+        self.tree.column('data następnej kontroli', stretch=tk.NO, width=150)
 
 
-        self.tree.grid(column=2, row=0, columnspan=2, rowspan=20)
+        self.viewing_records()
+
 
     #---------- database ----------
 
@@ -155,6 +154,7 @@ class Application():
             messagebox.showinfo('Pomyślnie dodano sprzęt do bazy danych!')
 
     def load_settings(self):
+
         con = sqlite3.connect('equipment.db')
         con.row_factory = sqlite3.Row
         cur = con.cursor()
@@ -164,22 +164,29 @@ class Application():
 
         equip = cur.fetchall()
         for item in equip:
-            print(item['indeks'], item['type'], item['size'], item['inside'], item['dateadd'])
-        print()
+                print(item['indeks'], item['type'], item['size'], item['inside'], item['dateadd'])
 
+
+    def viewing_records(self):
+        conn = sqlite3.connect('equipment.db')
+        cur = conn.cursor()
+        cur.execute('SELECT * FROM equipment')
+        rows = cur.fetchall()
+        for row in rows:
+            print(row)
+            self.tree.insert('', tk.END, values=row)
+        conn.close()
 
 
     # ----------destroy button ----------
 
     def master_exit(self):
-        master.destroy()
+        self.destroy()
 
-#---------- window look options -----------
-root = Tk()
-root.geometry('1000x800')
-root.title('Gaśnica')
-
-b = Application(root)
-root.mainloop()
-
-exit()
+if __name__ == '__main__':
+    root = Tk()
+    root.geometry('1200x700')
+    root.title('Gaśnica')
+    run = Application(root)
+    root.mainloop()
+    exit()
