@@ -130,10 +130,10 @@ class Application():
 
         # ---------- adding items ---------
 
-        indeks = self.numEq.get()
-        type = self.typeEq.get()
-        size = self.sizeEq.get()
-        inside = self.typeIn.get()
+        indeks = self.numEq_var.get()
+        type = self.typeEq_var.get()
+        size = self.sizeEq_var.get()
+        inside = self.typeIn_var.get()
         dateadd = datetime.date.today()
         datacontrol = datetime.date.today()
         if len(type) == 0 or len(size) == 0 or len(inside) == 0:
@@ -165,9 +165,11 @@ class Application():
         cur = conn.cursor()
         cur.execute('SELECT * FROM equipment')
         rows = cur.fetchall()
+        cpt = 1
         for row in rows:
             print(row)
-            self.tree.insert('',tk.END, values=row)
+            self.tree.insert('', 'end', text=str(cpt), values=(row[1], row[2], row[3], row[4],'' ,'' ,row[5]))
+            cpt += 1
         conn.close()
 
 
