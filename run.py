@@ -15,88 +15,81 @@ import subprocess as s
 class Application():
     def __init__(self, master):
 
-        #---------- buttons ----------
+        self.find_lab = ttk.Label(master, text='Wyszukaj:')
+        self.find_lab.grid(column=0, row=0, columnspan=2)
 
-        self.find = Button(master, text='Szukaj', command=self.load_settings)
-        self.add = Button(master, text='Zapisz w bazie', command=self.save_settings)
-        self.quit = Button(master, text='Wyjście', command=master.destroy)
+        self.find_var = StringVar()
+        self.find_ent = tk.Entry(master, textvariable=self.find_var)
+        self.find_ent.grid(column=0, row=1, columnspan=2)
 
-        self.find.grid(column=0, row=2, columnspan=2)
-        self.add.grid(column=0, row=16)
-        self.quit.grid(column=1, row=16)
+        self.find_but = Button(master, text='Szukaj', command=self.load_settings)
+        self.find_but.grid(column=0, row=2, columnspan=2)
 
-        # ---------- label ----------
-
-        self.find = ttk.Label(master, text='Wyszukaj:')
-        self.show_area = ttk.Label(master, text='Rejon:')
-        self.sort = ttk.Label(master, text='Sortuj wg:')
-        self.add = ttk.Label(master, text='Dodaj sprzęt')
-        self.typeEq = ttk.Label(master, text='Typ gaśnicy: ')
-        self.sizeEq = ttk.Label(master, text='Pojemność: ')
-        self.typeIn = ttk.Label(master, text='rodzaj gaśnicy: ')
-        self.numEq = ttk.Label(master, text='Wybierz numer: ')
-
-        self.find.grid(column=0, row=0, columnspan=2)
-        self.show_area.grid(column=0, row=3, columnspan=2)
-        self.sort.grid(column=0, row=5, columnspan=2)
-        self.add.grid(column=0, row=7, columnspan=2)
-        self.typeEq.grid(column=0, row=8, columnspan=2)
-        self.sizeEq.grid(column=0, row=10, columnspan=2)
-        self.typeIn.grid(column=0, row=12, columnspan=2)
-        self.numEq.grid(column=0, row=14, columnspan=2)
-
-        #----------- Entries -----------
-
-        self.findies = StringVar()
-        self.find_entries = tk.Entry(master, textvariable=self.findies)
-
-        self.find_entries.grid(column=0, row=1, columnspan=2)
-
-        # ---------- Comboboxes ----------
-        self.typeEq = StringVar()
-        self.sizeEq = StringVar()
-        self.typeIn = StringVar()
-        self.numEq = StringVar()
-
-        self.typeEq_entries = ttk.Combobox(master, width=10, textvariable=self.typeEq)
-        self.typeEq_entries['values'] = ('X', 'Z')
-        self.typeEq_entries.current(0)
-
-        self.sizeEq_entries = ttk.Combobox(master, width=10, textvariable=self.sizeEq)
-        self.sizeEq_entries['values'] = ('6', '12')
-
-        self.typeIn_entries = ttk.Combobox(master, width=10, textvariable=self.typeIn)
-        self.typeIn_entries['values'] = ('proszek', 'płyn')
-
-        self.numEq_entries = ttk.Entry(master, width=10, textvariable=self.numEq)
-
-        self.typeEq_entries.grid(column=0, row=9, columnspan=2)
-        self.sizeEq_entries.grid(column=0, row=11, columnspan=2)
-        self.typeIn_entries.grid(column=0, row=13, columnspan=2)
-        self.numEq_entries.grid(column=0, row=15, columnspan=2)
-
-        #---------- check buttons ----------
+        self.area_lab = ttk.Label(master, text='Rejon:')
+        self.area_lab.grid(column=0, row=3, columnspan=2)
 
         self.area1_var = IntVar()
-        self.area1 = tk.Checkbutton(master, text='Rejon 1', variable=self.area1_var)
+        self.area1_chb = tk.Checkbutton(master, text='Rejon 1', variable=self.area1_var)
+        self.area1_chb.grid(column=0, row=4, columnspan=1, rowspan=1)
 
         self.area2_var = IntVar()
-        self.area2 = tk.Checkbutton(master, text='Rejon 2', variable=self.area2_var)
+        self.area2_chb = tk.Checkbutton(master, text='Rejon 2', variable=self.area2_var)
+        self.area2_chb.grid(column=1, row=4, columnspan=1, rowspan=1)
 
-        self.area1.grid(column=0, row=4, columnspan=1, rowspan=1)
-        self.area2.grid(column=1, row=4, columnspan=1, rowspan=1)
+        self.sort_lab = ttk.Label(master, text='Sortuj wg:')
+        self.sort_lab.grid(column=0, row=5, columnspan=2)
 
-        #---------- radio buttons ----------
+        self.num_rab = tk.Radiobutton(master, text='numeru')
+        self.num_rab.grid(column=0, row=6, columnspan=1, rowspan=1)
 
-        self.num = tk.Radiobutton(master, text='numeru')
-        self.localization = tk.Radiobutton(master, text='lokalizacji',)
+        self.localization_rab = tk.Radiobutton(master, text='lokalizacji')
+        self.localization_rab.grid(column=1, row=6, columnspan=1, rowspan=1)
 
-        self.num.grid(column=0, row=6, columnspan=1, rowspan=1)
-        self.localization.grid(column=1, row=6, columnspan=1, rowspan=1)
+        self.add_lab = ttk.Label(master, text='Dodaj sprzęt')
+        self.add_lab.grid(column=0, row=7, columnspan=2)
+
+        self.typeEq_lab = ttk.Label(master, text='Typ gaśnicy: ')
+        self.typeEq_lab.grid(column=0, row=8, columnspan=2)
+
+        self.typeEq_var = StringVar()
+        self.typeEq_ent = ttk.Combobox(master, width=10, textvariable=self.typeEq_var)
+        self.typeEq_ent['values'] = ('X', 'Z')
+        self.typeEq_ent.current(0)
+        self.typeEq_ent.grid(column=0, row=9, columnspan=2)
+
+        self.sizeEq_lab = ttk.Label(master, text='Pojemność:')
+        self.sizeEq_lab.grid(column=0, row=10, columnspan=2)
+
+        self.sizeEq_var = StringVar()
+        self.sizeEq_ent = ttk.Combobox(master, width=10, textvariable=self.sizeEq_var)
+        self.sizeEq_ent['values'] = ('6', '12')
+        self.sizeEq_ent.grid(column=0, row=11, columnspan=2)
+
+        self.typeIn_lab = ttk.Label(master, text='Środek gaśniczy: ')
+        self.typeIn_lab.grid(column=0, row=12, columnspan=2)
+
+        self.typeIn_var = StringVar()
+        self.typeIn_ent = ttk.Combobox(master, width=10, textvariable=self.typeIn_var)
+        self.typeIn_ent['values'] = ('proszek', 'płyn')
+        self.typeIn_ent.grid(column=0, row=13, columnspan=2)
+
+        self.numEq_lab = ttk.Label(master, text='Wybierz numer: ')
+        self.numEq_lab.grid(column=0, row=14, columnspan=2)
+
+        self.numEq_var = StringVar()
+        self.numEq_ent = ttk.Entry(master, width=10, textvariable=self.numEq_var)
+        self.numEq_ent.grid(column=0, row=15, columnspan=2)
+
+        self.add_but = Button(master, text='Zapisz w bazie', command=self.save_settings)
+        self.add_but.grid(column=0, row=16)
+
+        self.quit_but = Button(master, text='Wyjście', command=master.destroy)
+        self.quit_but.grid(column=1, row=16)
 
         #---------- treeview ----------
 
-        self.tree = ttk.Treeview(height=30, columns=('Nr. gaśnicy', 'Typ gaśnicy','Pojemność','Środek', 'Rejon', 'lokalizacja', 'data kontroli', 'data następnej kontroli'))
+        self.tree = ttk.Treeview(height=30, columns=('Nr. gaśnicy', 'Typ gaśnicy','Pojemność','Środek', 'Rejon',
+                                                     'lokalizacja', 'data kontroli', 'data następnej kontroli'))
         self.tree.grid(column=2, row=0, rowspan=20)
         self.tree.heading('#0', text='Index', anchor=W)
         self.tree.heading('Nr. gaśnicy', text='Nr. gaśnicy', anchor=W)
@@ -174,7 +167,7 @@ class Application():
         rows = cur.fetchall()
         for row in rows:
             print(row)
-            self.tree.insert('', tk.END, values=row)
+            self.tree.insert('',tk.END, values=row)
         conn.close()
 
 
