@@ -52,44 +52,59 @@ class Application():
         self.typeEq_lab.grid(column=0, row=8, columnspan=2)
 
         self.typeEq_var = StringVar()
-        self.typeEq_ent = ttk.Combobox(master, width=10, textvariable=self.typeEq_var)
-        self.typeEq_ent['values'] = ('X', 'Z')
-        self.typeEq_ent.current(0)
-        self.typeEq_ent.grid(column=0, row=9, columnspan=2)
+        self.typeEq_cob = ttk.Combobox(master, width=10, textvariable=self.typeEq_var)
+        self.typeEq_cob['values'] = ('X', 'Z')
+        self.typeEq_cob.current(0)
+        self.typeEq_cob.grid(column=0, row=9, columnspan=2)
 
         self.sizeEq_lab = ttk.Label(master, text='Pojemność:')
         self.sizeEq_lab.grid(column=0, row=10, columnspan=2)
 
         self.sizeEq_var = StringVar()
-        self.sizeEq_ent = ttk.Combobox(master, width=10, textvariable=self.sizeEq_var)
-        self.sizeEq_ent['values'] = ('6', '12')
-        self.sizeEq_ent.grid(column=0, row=11, columnspan=2)
+        self.sizeEq_cob = ttk.Combobox(master, width=10, textvariable=self.sizeEq_var)
+        self.sizeEq_cob['values'] = ('6', '12')
+        self.sizeEq_cob.grid(column=0, row=11, columnspan=2)
 
         self.typeIn_lab = ttk.Label(master, text='Środek gaśniczy: ')
         self.typeIn_lab.grid(column=0, row=12, columnspan=2)
 
         self.typeIn_var = StringVar()
-        self.typeIn_ent = ttk.Combobox(master, width=10, textvariable=self.typeIn_var)
-        self.typeIn_ent['values'] = ('proszek', 'płyn')
-        self.typeIn_ent.grid(column=0, row=13, columnspan=2)
+        self.typeIn_cob = ttk.Combobox(master, width=10, textvariable=self.typeIn_var)
+        self.typeIn_cob['values'] = ('proszek', 'płyn')
+        self.typeIn_cob.grid(column=0, row=13, columnspan=2)
+
+        self.area_lab = ttk.Label(master, text='Rejon')
+        self.area_lab.grid(column=0, row=14, columnspan=2)
+
+        self.area_var = StringVar()
+        self.area_cob = ttk.Combobox(master, width=10, textvariable=self.area_var)
+        self.area_cob['values'] = ('Rejon 1', 'Rejon 2')
+        self.area_cob.grid(column=0, row=15, columnspan=2)
+
+        self.localization_lab = ttk.Label(master, text='Lokalizacja:')
+        self.localization_lab.grid(column=0, row=16, columnspan=2)
+
+        self.localization_var = StringVar()
+        self.localization_ent = ttk.Entry(master, width=10, textvariable=self.localization_var)
+        self.localization_ent.grid(column=0, row=17, columnspan=2)
 
         self.numEq_lab = ttk.Label(master, text='Wybierz numer: ')
-        self.numEq_lab.grid(column=0, row=14, columnspan=2)
+        self.numEq_lab.grid(column=0, row=18, columnspan=2)
 
         self.numEq_var = StringVar()
         self.numEq_ent = ttk.Entry(master, width=10, textvariable=self.numEq_var)
-        self.numEq_ent.grid(column=0, row=15, columnspan=2)
+        self.numEq_ent.grid(column=0, row=19, columnspan=2)
 
         self.add_but = Button(master, text='Zapisz w bazie', command=self.save_settings)
-        self.add_but.grid(column=0, row=16)
+        self.add_but.grid(column=0, row=20)
 
         self.quit_but = Button(master, text='Wyjście', command=master.destroy)
-        self.quit_but.grid(column=1, row=16)
+        self.quit_but.grid(column=1, row=20)
 
         #---------- treeview ----------
 
         self.tree = ttk.Treeview(height=30, columns=('Nr. gaśnicy', 'Typ gaśnicy','Pojemność','Środek', 'Rejon',
-                                                     'lokalizacja', 'data kontroli', 'data następnej kontroli'))
+                                                     'lokalizacja', 'data kontroli', 'Osoba kontrolująca'))
         self.tree.grid(column=2, row=0, rowspan=20)
         self.tree.heading('#0', text='Index', anchor=W)
         self.tree.heading('Nr. gaśnicy', text='Nr. gaśnicy', anchor=W)
@@ -99,7 +114,7 @@ class Application():
         self.tree.heading('Rejon', text='Rejon', anchor=W)
         self.tree.heading('lokalizacja', text='lokalizacja', anchor=W)
         self.tree.heading('data kontroli', text='data kontroli', anchor=W)
-        self.tree.heading('data następnej kontroli', text='data następnej kontroli', anchor=W)
+        self.tree.heading('Osoba kontrolująca', text='Osoba kontrolująca', anchor=W)
 
         self.tree.column('#0', stretch=tk.NO, width=50)
         self.tree.column('Nr. gaśnicy', stretch=tk.NO, width=70)
@@ -109,15 +124,13 @@ class Application():
         self.tree.column('Rejon', stretch=tk.NO, width=50)
         self.tree.column('lokalizacja', stretch=tk.YES, minwidth=50, width=300)
         self.tree.column('data kontroli', stretch=tk.NO, width=150)
-        self.tree.column('data następnej kontroli', stretch=tk.NO, width=150)
+        self.tree.column('Osoba kontrolująca', stretch=tk.NO, width=150)
 
 
         self.viewing_records()
 
 
     #---------- database ----------
-
-
 
     def save_settings(self):
         con = sqlite3.connect('equipment.db')
@@ -144,7 +157,7 @@ class Application():
             cur.execute('INSERT INTO equipment (indeks, type, size, inside, dateadd) VALUES (?, ?, ?, ?, ?)',
                 (indeks, type, size, inside, dateadd))
             con.commit()
-            messagebox.showinfo('Pomyślnie dodano sprzęt do bazy danych!')
+            messagebox.showinfo('Info', 'Pomyślnie dodano sprzęt do bazy danych!')
 
     def load_settings(self):
 
@@ -152,7 +165,7 @@ class Application():
         con.row_factory = sqlite3.Row
         cur = con.cursor()
 
-        findies = self.findies.get()
+        findies = self.find_var.get()
         cur.execute('SELECT * FROM equipment WHERE indeks LIKE ?',(findies,))
 
         equip = cur.fetchall()
@@ -167,7 +180,6 @@ class Application():
         rows = cur.fetchall()
         cpt = 1
         for row in rows:
-            print(row)
             self.tree.insert('', 'end', text=str(cpt), values=(row[1], row[2], row[3], row[4],'' ,'' ,row[5]))
             cpt += 1
         conn.close()
