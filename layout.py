@@ -71,29 +71,37 @@ class Gui():
         self.area_cob['values'] = ('Rejon 1', 'Rejon 2')
         self.area_cob.grid(column=0, row=15, columnspan=2)
 
-        self.localization_lab = ttk.Label(text='Lokalizacja:')
-        self.localization_lab.grid(column=0, row=16, columnspan=2)
-
-        self.localization_var = StringVar()
-        self.localization_ent = ttk.Entry(width=10, textvariable=self.localization_var)
-        self.localization_ent.grid(column=0, row=17, columnspan=2)
-
         self.numEq_lab = ttk.Label(text='Wybierz numer: ')
-        self.numEq_lab.grid(column=0, row=18, columnspan=2)
+        self.numEq_lab.grid(column=0, row=16, columnspan=2)
 
         self.numEq_var = StringVar()
         self.numEq_ent = ttk.Entry(width=10, textvariable=self.numEq_var)
-        self.numEq_ent.grid(column=0, row=19, columnspan=2)
+        self.numEq_ent.grid(column=0, row=17, columnspan=2)
+
+        self.localization_lab = ttk.Label(text='Lokalizacja:')
+        self.localization_lab.grid(column=0, row=18, columnspan=2)
+
+        self.localization_var = StringVar()
+        self.localization_ent = ttk.Entry(width=10, textvariable=self.localization_var)
+        self.localization_ent.grid(column=0, row=19, columnspan=2)
+
+        self.person_lab = ttk.Label(text='Osoba kontruląca:')
+        self.person_lab.grid(column=0, row=20, columnspan=2)
+
+        self.person_var = StringVar()
+        self.person_ent = ttk.Entry(width=10, textvariable=self.person_var)
+        self.person_ent.grid(column=0, row=21, columnspan=2)
+
 
         self.add_but = Button(text='Zapisz w bazie', command=self.save_settings)
-        self.add_but.grid(column=0, row=20)
+        self.add_but.grid(column=0, row=22)
 
         self.quit_but = Button(text='Wyjście', command=exit)
-        self.quit_but.grid(column=1, row=20)
+        self.quit_but.grid(column=1, row=22)
 
         # ---------- treeview ----------
 
-        self.tree = ttk.Treeview(height=30, columns=('Nr. gaśnicy', 'Typ gaśnicy', 'Pojemność', 'Środek', 'Rejon',
+        self.tree = ttk.Treeview(height=35, columns=('Nr. gaśnicy', 'Typ gaśnicy', 'Pojemność', 'Środek', 'Rejon',
                                                      'lokalizacja', 'data kontroli', 'Osoba kontrolująca'))
         self.tree.grid(column=2, row=0, rowspan=20)
         self.tree.heading('#0', text='Index', anchor=W)
@@ -111,10 +119,10 @@ class Gui():
         self.tree.column('Typ gaśnicy', stretch=tk.NO, width=70)
         self.tree.column('Pojemność', stretch=tk.NO, width=70)
         self.tree.column('Środek', stretch=tk.NO, width=70)
-        self.tree.column('Rejon', stretch=tk.NO, width=50)
+        self.tree.column('Rejon', stretch=tk.NO, width=70)
         self.tree.column('lokalizacja', stretch=tk.YES, minwidth=50, width=300)
         self.tree.column('data kontroli', stretch=tk.NO, width=150)
-        self.tree.column('Osoba kontrolująca', stretch=tk.NO, width=150)
+        self.tree.column('Osoba kontrolująca', stretch=tk.NO, width=150, anchor=CENTER)
 
     def exit():
         destroy()

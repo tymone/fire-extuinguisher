@@ -12,7 +12,7 @@ class Application(Gui, Database):
 
 if __name__ == '__main__':
     root = Tk()
-    root.geometry('1200x700')
+    root.geometry('1200x800')
     root.title('Gaśnica')
     run = Application(root)
     root.mainloop()
