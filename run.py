@@ -16,4 +16,5 @@ if __name__ == '__main__':
     root.title('Gaśnica')
     run = Application(root)
     root.mainloop()
+    Database.con.close()
     exit()

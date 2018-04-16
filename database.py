@@ -24,10 +24,11 @@ class Database():
                             dateadd TEXT, person TEXT)""")
 
         cur.execute('SELECT * FROM equipment')
+        cur.execute('SELECT * FROM equipment ORDER BY indeks ASC')
         rows = cur.fetchall()
         cpt = 1
         for row in rows:
-            self.tree.insert('', 'end', text=str(cpt), values=(row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]))
+            self.tree.insert('', 'end', text=str(cpt), values=(row[1],'','', row[2], row[3], row[4], row[5], row[6], row[7], row[8]))
             cpt += 1
 
 
@@ -40,10 +41,9 @@ class Database():
         area = self.area_var.get()
         localize = self.localization_var.get()
         person = self.person_var.get()
-
         dateadd = datetime.date.today()
         datacontrol = datetime.date.today()
-        if len(type) == 0 or len(size) == 0 or len(inside) == 0:
+        if len(type) == 0 or len(size) == 0 or len(inside) == 0 or len(area) == 0 or len(localize) == 0 or len(person) == 0 :
             print('Nie wszystkie pola zostały wypełnione prawidłowo, spróbuj ponownie!')
             messagebox.showwarning('Nie wszystkie pola zostały wypłnione prawidłowo, spróbuj ponownie!')
 
@@ -55,11 +55,6 @@ class Database():
                         (indeks, type, size, inside, area, localize, dateadd, person))
             con.commit()
             messagebox.showinfo('Info', 'Pomyślnie dodano sprzęt do bazy danych!')
-
-
-        # polaczenie z baza danych
-        # + trzymanie tego w obiekcie
-        # self.con =
 
     #def create_schema(db_connection):
         # check if equipment.db exists, return true
