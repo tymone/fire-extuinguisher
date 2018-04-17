@@ -1,16 +1,11 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from tkinter import *
-from tkinter import ttk
-import tkinter as tk
 import sqlite3
 import time
 import datetime
 import random
 from tkinter import messagebox
-import subprocess as s
-import sys
 
 class Database():
     def initialize_db_connection(self):
