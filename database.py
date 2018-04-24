@@ -7,63 +7,78 @@ import datetime
 import random
 from tkinter import messagebox
 
-class Database():
-    def initialize_db_connection(self):
-        con = sqlite3.connect('equipment.db')
-        con.row_factory = sqlite3.Row
-        cur = con.cursor()
+class Database:
+    db_name = 'equipment.db'
 
-        cur.execute("""
-                            CREATE TABLE IF NOT EXISTS equipment(id INTEGER PRIMARY KEY ASC,
-                            indeks INTEGER, udt TEXT, tank TEXT, type TEXT, size INTEGER, inside TEXT, area INTEGER, localize TEXT,
-                            dateadd TEXT, person TEXT)""")
+    def initialize_db_connection(self, query, parameters = ()):
+        with sqlite3.connect(self.db_name) as con:
+            cur = con.cursor()
+            cur.execute(""" CREATE TABLE IF NOT EXISTS equipment(id INTEGER PRIMARY KEY ASC, 
+                                                                    indeks INTEGER, udt TEXT, tank TEXT, type TEXT,
+                                                                    size INTEGER, inside TEXT, area INTEGER, 
+                                                                    localize TEXT, dateadd TEXT, person TEXT)""")
+            query_result = cur.execute(query, parameters)
+            con.commit()
+        return query_result
 
-        cur.execute('SELECT * FROM equipment')
-        cur.execute('SELECT * FROM equipment ORDER BY indeks ASC')
-        rows = cur.fetchall()
+    def view_records(self):
+        records = self.tree.get_children()
+        for item in records:
+            self.tree.delete(item)
+        query = 'SELECT * FROM equipment ORDER BY indeks ASC'
+        db_rows = self.initialize_db_connection(query)
         cpt = 1
-        for row in rows:
+        for row in db_rows:
             self.tree.insert('', 'end', text=str(cpt),
-                             values=(row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[10], row[9]))
+                             values=(row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
             cpt += 1
 
-    def save_settings(self):
+    def validation(self):
+        return len(self.numEq_var.get()) != 0 \
+               or len(self.typeEQ_var.get()) != 0 \
+               or len(self.udt_var.get()) != 0 \
+               or len(self.tankNum_var.get()) !=0 \
+               or len(self.sizeEq_var.get()) != 0 \
+               or len(self.typeIn_var.get()) != 0 \
+               or len(self.area_var.get()) !=0 \
+               or len(self.localization_var.get()) !=0 \
+               or len(self.person_var.get()) != 0 \
+               or len(self.date_var.get() != 0)
 
-        indeks = self.numEq_var.get()
-        udt = self.udt_var.get()
-        tank = self.tankNum_var.get()
-        type = self.typeEq_var.get()
-        size = self.sizeEq_var.get()
-        inside = self.typeIn_var.get()
-        area = self.area_var.get()
-        localize = self.localization_var.get()
-        person = self.person_var.get()
-        dateadd = self.date_var.get()
-        datacontrol = datetime.date.today()
-        if len(type) == 0 or len(udt) == 0 or len(tank) ==0 or len(size) == 0 or len(inside) == 0 or len(area) ==0 or len(localize) ==0 or len(person) == 0:
-            print('Nie wszystkie pola zostały wypełnione prawidłowo, spróbuj ponownie!')
-            messagebox.showwarning('Nie wszystkie pola zostały wypłnione prawidłowo, spróbuj ponownie!')
+    def adding(self):
+        if self.validation():
+            query = 'INSERT INTO equipment VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            parameters = (self.numEq_var.get(), self.udt_var.get(), self.tankNum_var.get(), self.typeEq_var.get(), \
+                          self.sizeEq_var.get(), self.typeIn_var.get(), self.area_var.get(), \
+                          self.localization_var.get(), self.person_var.get(), self.date_var.get())
+            self.initialize_db_connection(query, parameters)
+            messagebox.showinfo('Info', 'Pomyślnie dodano sprzęt do bazy danych!')
+            self.numEq_ent.delete (1, 1)
+            self.udt_ent.delete (2, 2)
+            self.tankNum_ent.delete (3, 3)
+            self.typeEq_cob.delete (4, 4)
+            self.sizeEq_cob.delete (5, 5)
+            self.typeIn_cob.delete (6, 6)
+            self.area_cob.delete (7, 7)
+            self.localization_ent.delete (8, 8)
+            self.person_ent.delete (9, 9)
+            self.date_ent.delete (10, 10)
 
         else:
-            con = sqlite3.connect('equipment.db')
-            con.row_factory = sqlite3.Row
-            cur = con.cursor()
-            cur.execute("""
-                            INSERT INTO equipment 
-                            (indeks, udt, tank, type, size, inside, area, localize, dateadd, person) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                        (indeks, udt, tank, type, size, inside, area, localize, dateadd, person))
+            messagebox.showinfo('info', 'Nie wszystkie pola zostały wypełnione poprawnie.')
 
-            messagebox.showinfo('Info', 'Pomyślnie dodano sprzęt do bazy danych!')
+        self.view_records()
 
-            con.commit()
+    def deleting(self):
+        try:
+            self.tree.item(self.tree.selection())['values'][1]
+        except IndexError as e:
+            messagebox.showinfo('info', 'Nie wybrano przedmiotu. Zaznacz przedmiot i spróbuj ponownie.')
+            return
 
-    def delete(self):
-        conn = sqlite3.connect("equipment.db")
-        cur = conn.cursor()
-        for selected_item in self.tree.selection():
-            print(selected_item)  # it prints the selected row id
-            cur.execute("DELETE FROM equipment WHERE id=?", (self.tree.set(selected_item, '#1'),))
-            conn.commit()
-            self.tree.delete(selected_item)
+        name = self.tree.item(self.tree.selection())['text']
+        query = 'DELETE FROM equipment WHERE indeks = ?'
+        self.initialize_db_connection(query, (name, ))
+        messagebox.showinfo('info', 'Przedmiot został usunięty.')
+        self.view_records()
 

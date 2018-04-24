@@ -8,7 +8,7 @@ from database import Database
 class Application(Gui, Database):
     def __init__(self, root):
         Gui.init_gui(self)
-        Database.initialize_db_connection(self)
+        Database.view_records(self)
 
 if __name__ == '__main__':
     root = Tk()

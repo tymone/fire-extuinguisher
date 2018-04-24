@@ -1,8 +1,12 @@
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from tkinter import *
 from tkinter import ttk
 import tkinter as tk
+from editing import editing
 
-class Gui():
+class Gui:
     def init_gui(self):
         self.find_lab = ttk.Label(text='Wyszukaj:')
         self.find_lab.grid(column=0, row=0, columnspan=3)
@@ -93,14 +97,17 @@ class Gui():
         self.person_ent.grid(column=1, row=13, columnspan=2)
 
 
-        self.add_but = Button(text='Zapisz w bazie', command=self.save_settings)
+        self.add_but = Button(text='Zapisz w bazie', command=self.adding)
         self.add_but.grid(column=0, row=14)
 
-        self.delete_but = Button(text='Usuń z bazy', command=self.delete)
+        self.delete_but = Button(text='Usuń z bazy', command=self.deleting)
         self.delete_but.grid(column=1, row=14)
 
+        self.edit_but = Button(text='Edytuj')        #editing!
+        self.edit_but.grid(column=2, row=14)
+
         self.quit_but = Button(text='Wyjście', command=exit)
-        self.quit_but.grid(column=2, row=14)
+        self.quit_but.grid(column=0, row=15, columnspan=3)
 
         # ---------- treeview ----------
         def treeview_sort_column(tv, col, reverse):
@@ -112,16 +119,20 @@ class Gui():
                 tv.move(k, '', index)
 
             # reverse sort next time
-            tv.heading(col, command=lambda: \
-                treeview_sort_column(tv, col, not reverse))
+            tv.heading(col, command=lambda: treeview_sort_column(tv, col, not reverse))
 
         columns =('Nr. gaśnicy', 'UDT', 'Nr. Zbiornika', 'Typ gaśnicy', 'Pojemność',
-                    'Środek', 'Rejon', 'lokalizacja', 'data kontroli', 'Osoba kontrolująca')
+                    'Środek', 'Rejon', 'lokalizacja', 'Osoba kontrolująca', 'data kontroli')
 
         self.tree = ttk.Treeview(height=35, selectmode='browse', columns=columns, show='headings')
+
         for col in columns:
-            self.tree.heading(col, text=col, command=lambda _col=col: \
-                treeview_sort_column(self.tree, _col, False))
+            self.tree.heading(col, text=col, command=lambda _col=col: treeview_sort_column(self.tree, _col, False))
+
+        self.vsb = ttk.Scrollbar(orient="vertical", command=self.tree.yview)
+        self.vsb.grid(sticky=E)
+
+        self.tree.configure(yscrollcommand=self.vsb.set)
 
         self.tree.grid(column=3, row=0, rowspan=30)
         self.tree.heading('#0', text='Index', anchor=W)
@@ -133,8 +144,8 @@ class Gui():
         self.tree.heading('Środek', text='Środek', anchor=W)
         self.tree.heading('Rejon', text='Rejon', anchor=W)
         self.tree.heading('lokalizacja', text='lokalizacja', anchor=W)
-        self.tree.heading('data kontroli', text='data kontroli', anchor=W)
         self.tree.heading('Osoba kontrolująca', text='Osoba kontrolująca', anchor=W)
+        self.tree.heading('data kontroli', text='data kontroli', anchor=W)
 
         self.tree.column('#0', stretch=tk.NO, width=50)
         self.tree.column('Nr. gaśnicy', stretch=tk.NO, width=70)
@@ -145,8 +156,8 @@ class Gui():
         self.tree.column('Środek', stretch=tk.NO, width=70)
         self.tree.column('Rejon', stretch=tk.NO, width=70)
         self.tree.column('lokalizacja', stretch=tk.YES, minwidth=50, width=250)
-        self.tree.column('data kontroli', stretch=tk.NO, width=150)
-        self.tree.column('Osoba kontrolująca', stretch=tk.NO, width=150, anchor=CENTER)
+        self.tree.column('Osoba kontrolująca', stretch=tk.NO, width=150)
+        self.tree.column('data kontroli', stretch=tk.NO, width=150, anchor=CENTER)
 
 
     def exit():
