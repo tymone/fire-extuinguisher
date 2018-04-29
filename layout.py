@@ -4,7 +4,7 @@
 from tkinter import *
 from tkinter import ttk
 import tkinter as tk
-from editing import editing
+from tkinter import messagebox
 
 class Gui:
     def init_gui(self):
@@ -103,7 +103,7 @@ class Gui:
         self.delete_but = Button(text='Usuń z bazy', command=self.deleting)
         self.delete_but.grid(column=1, row=14)
 
-        self.edit_but = Button(text='Edytuj')        #editing!
+        self.edit_but = Button(text='Edytuj', command=self.editing)        #editing!
         self.edit_but.grid(column=2, row=14)
 
         self.quit_but = Button(text='Wyjście', command=exit)
@@ -159,6 +159,166 @@ class Gui:
         self.tree.column('Osoba kontrolująca', stretch=tk.NO, width=150)
         self.tree.column('data kontroli', stretch=tk.NO, width=150, anchor=CENTER)
 
+    def editing(self):
+        try:
+            self.tree.item(self.tree.selection())['values'][1]
+        except IndexError:
+            messagebox.showinfo('info', 'Nie zaznaczono przediomtu. Wybierz przedmiot i spróbuj ponownie')
+            return
+
+        indeks = self.tree.item(self.tree.selection ())['text']
+        old_price = self.tree.item(self.tree.selection ())['values'][1]
+
+        self.wind = Tk()
+        self.wind.geometry('600x600')
+        self.wind.title('Edycja')
+
+        self.indeks_lab = ttk.Label(self.wind, text='Obecny numer:')
+        self.indeks_lab.grid(column=0, row=0)
+
+        self.indeks_ent = ttk.Entry(self.wind, textvariable=StringVar(value=indeks), state='readonly')
+        self.indeks_ent.grid(column=1, row=0)
+
+        self.n_indeks_lab = ttk.Label(self.wind, text='Nowy numer:')
+        self.n_indeks_lab.grid(column=0, row=1)
+
+        self.n_indeks_var = StringVar()
+        self.n_indeks_ent = ttk.Entry(self.wind, textvariable=self.n_indeks_var)
+        self.n_indeks_ent.grid(column=1, row=1)
+
+        self.udt_lab = ttk.Label(self.wind, text='Obecny nr UDT:')
+        self.udt_lab.grid(column=0, row=2)
+
+        self.udt_ent_var = StringVar()
+        self.udt_ent = ttk.Entry(self.wind, textvariable=self.udt_ent_var, state='readonly')
+        self.udt_ent.grid(column=1, row=2)
+
+        self.n_udt_lab = ttk.Label(self.wind, text='Nowy nr UDT:')
+        self.n_udt_lab.grid(column=0, row=3)
+
+        self.n_udt_var = StringVar()
+        self.n_udt_ent = ttk.Entry(self.wind, textvariable=self.udt_ent_var)
+        self.n_udt_ent.grid(column=1, row=3)
+
+        self.nr_tank_lab = ttk.Label(self.wind, text='Obecny nr. zbiornika:')
+        self.nr_tank_lab.grid(column=0, row=4)
+
+        self.nr_tank_var = StringVar()
+        self.nr_tank_ent = ttk.Entry(self.wind, textvariable=self.nr_tank_var, state='readonly')
+        self.nr_tank_ent.grid(column=1, row=4)
+
+        self.n_nr_tank_lab = ttk.Label(self.wind, text='Nowy nr. zbiornika')
+        self.n_nr_tank_lab.grid(column=0, row=5)
+
+        self.n_nr_tank_var = StringVar()
+        self.n_nr_tank_ent = ttk.Entry(self.wind, textvariable=self.n_nr_tank_var)
+        self.n_nr_tank_ent.grid(column=1, row=5)
+
+        self.type_lab = ttk.Label(self.wind, text='Obecny typ gaśnicy:')
+        self.type_lab.grid(column=0, row=6)
+
+        self.type_var = StringVar()
+        self.type_ent = ttk.Entry(self.wind, textvariable=self.type_var, state='readonly')
+        self.type_ent.grid(column=1, row=6)
+
+        self.n_type_lab = ttk.Label(self.wind, text='Nowy typ gaśnicy:')
+        self.n_type_lab.grid(column=0, row=7)
+
+        self.n_type_var = StringVar()
+        self.n_type_ent =ttk.Entry(self.wind, textvariable=self.n_type_var)
+        self.n_type_ent.grid(column=1, row=7)
+
+        self.size_lab = ttk.Label(self.wind, text='Obecna pojemność:')
+        self.size_lab.grid(column=0, row=8)
+
+        self.size_var = StringVar()
+        self.size_ent = ttk.Entry(self.wind, textvariable=self.size_var, state='readonly')
+        self.size_ent.grid(column=1, row=8)
+
+        self.n_size_lab = ttk.Label(self.wind, text='Nowa pojemność:')
+        self.n_size_lab.grid(column=0, row=9)
+
+        self.n_size_var = StringVar()
+        self.n_size_ent = ttk.Entry(self.wind, textvariable=self.n_size_var)
+        self.n_size_ent.grid(column=1, row=9)
+
+        self.inside_lab = ttk.Label(self.wind, text='Obecny środek gaśniczy:')
+        self.inside_lab.grid(column=0, row=10)
+
+        self.inside_var = StringVar()
+        self.inside_ent = ttk.Entry(self.wind, textvariable=self.inside_var, state='readonly')
+        self.inside_ent.grid(column=1, row=10)
+
+        self.n_inside_lab = ttk.Label(self.wind, text='Nowy środek gaśniczy:')
+        self.n_inside_lab.grid(column=0, row=11)
+
+        self.n_inside_var = StringVar()
+        self.n_inside_ent = ttk.Entry(self.wind, textvariable=self.n_inside_var)
+        self.n_inside_ent.grid(column=1, row=11)
+
+        self.area_lab = ttk.Label(self.wind, text='Obecny Rejon:')
+        self.area_lab.grid(column=0, row=12)
+
+        self.area_var = StringVar()
+        self.area_ent = ttk.Entry(self.wind, textvariable=self.area_var, state='readonly')
+        self.area_ent.grid(column=1, row=12)
+
+        self.n_area_lab = ttk.Label(self.wind, text='Nowy Rejon:')
+        self.n_area_lab.grid(column=0, row=13)
+
+        self.n_area_var = StringVar()
+        self.n_area_ent = ttk.Entry(self.wind, textvariable=self.n_area_var)
+        self.n_area_ent.grid(column=1, row=13)
+
+        self.localize_lab = ttk.Label(self.wind, text='Obecna lokalizacja:')
+        self.localize_lab.grid(column=0, row=14)
+
+        self.localize_var = StringVar()
+        self.localize_ent = ttk.Entry(self.wind, textvariable=self.localize_var, state='readonly')
+        self.localize_ent.grid(column=1, row=14)
+
+        self.n_localize_lab = ttk.Label(self.wind, text='Nowa lokalizacja:')
+        self.n_localize_lab.grid(column=0, row=15)
+
+        self.n_localize_var = StringVar()
+        self.n_localize_ent = ttk.Entry(self.wind, textvariable=self.n_localize_var)
+        self.n_localize_ent.grid(column=1, row=15)
+
+        self.controller_lab = ttk.Label(self.wind, text='Obecna osoba kontrolująca:')
+        self.controller_lab.grid(column=0, row=16)
+
+        self.controller_var = StringVar()
+        self.controller_ent = ttk.Entry(self.wind, textvariable=self.controller_var, state='readonly')
+        self.controller_ent.grid(column=1, row=16)
+
+        self.n_controller_lab = ttk.Label(self.wind, text='Nowa osoba kontrolująca:')
+        self.n_controller_lab.grid(column=0, row=17)
+
+        self.n_controller_var = StringVar()
+        self.n_controller_ent = ttk.Entry(self.wind, textvariable=self.n_controller_var)
+        self.n_controller_ent.grid(column=1, row=17)
+
+        self.data_lab = ttk.Label(self.wind, text='Obecna data kontroli:')
+        self.data_lab.grid(column=0, row=18)
+
+        self.data_var = StringVar()
+        self.data_ent = ttk.Entry(self.wind, textvariable=self.data_var, state='readonly')
+        self.data_ent.grid(column=1, row=18)
+
+        self.n_data_lab = ttk.Label(self.wind, text='Nowa data kontroli:')
+        self.n_data_lab.grid(column=0, row=19)
+
+        self.n_data_var = StringVar()
+        self.n_data_ent = ttk.Entry(self.wind, textvariable=self.n_data_var)
+        self.n_data_ent.grid(column=1, row=19)
+
+
+
+
+
+
+
+        self.wind.mainloop()
 
     def exit():
         destroy()

@@ -76,7 +76,7 @@ class Database:
             messagebox.showinfo('info', 'Nie wybrano przedmiotu. Zaznacz przedmiot i spróbuj ponownie.')
             return
 
-        name = self.tree.item(self.tree.selection())['text']
+        name = self.tree.item(self.tree.selection())['values'][1]
         query = 'DELETE FROM equipment WHERE indeks = ?'
         self.initialize_db_connection(query, (name, ))
         messagebox.showinfo('info', 'Przedmiot został usunięty.')
