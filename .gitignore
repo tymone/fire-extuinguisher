@@ -63,6 +63,7 @@ fabric.properties
 # .idea/misc.xml
 # *.ipr
 #.db
+#.DS_Store
 
 # Sonarlint plugin
 .idea/sonarlint
