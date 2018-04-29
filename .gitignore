@@ -31,6 +31,9 @@ cmake-build-debug/
 
 ## File-based project format:
 *.iws
+*.log
+*.sql
+*.sqlite
 
 ## Plugin-specific files:
 
@@ -62,8 +65,7 @@ fabric.properties
 # modules.xml
 # .idea/misc.xml
 # *.ipr
-#.db
-#.DS_Store
+# .DS_Store
 
 # Sonarlint plugin
 .idea/sonarlint
