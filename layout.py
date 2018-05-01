@@ -5,6 +5,7 @@ from tkinter import *
 from tkinter import ttk
 import tkinter as tk
 from tkinter import messagebox
+from database import Database
 
 class Gui:
     def init_gui(self):
@@ -103,7 +104,7 @@ class Gui:
         self.delete_but = Button(text='Usuń z bazy', command=self.deleting)
         self.delete_but.grid(column=1, row=14)
 
-        self.edit_but = Button(text='Edytuj', command=self.editing)        #editing!
+        self.edit_but = Button(text='Edytuj', command=self.editing_wind)        #editing!
         self.edit_but.grid(column=2, row=14)
 
         self.quit_but = Button(text='Wyjście', command=exit)
@@ -159,164 +160,146 @@ class Gui:
         self.tree.column('Osoba kontrolująca', stretch=tk.NO, width=150)
         self.tree.column('data kontroli', stretch=tk.NO, width=150, anchor=CENTER)
 
-    def editing(self):
+    def editing_wind(self):
         try:
-            self.tree.item(self.tree.selection())['values'][1]
+            self.tree.item(self.tree.selection())['values'][0]
         except IndexError:
             messagebox.showinfo('info', 'Nie zaznaczono przediomtu. Wybierz przedmiot i spróbuj ponownie')
             return
 
-        indeks = self.tree.item(self.tree.selection ())['text']
-        old_price = self.tree.item(self.tree.selection ())['values'][1]
+        self.editing()
 
         self.wind = Tk()
-        self.wind.geometry('600x600')
+        self.wind.geometry('500x600')
         self.wind.title('Edycja')
 
-        self.indeks_lab = ttk.Label(self.wind, text='Obecny numer:')
-        self.indeks_lab.grid(column=0, row=0)
+        self.old_lab = ttk.Label(self.wind, text= 'Obecnie')
+        self.old_lab.grid(column=1, row=0)
 
-        self.indeks_ent = ttk.Entry(self.wind, textvariable=StringVar(value=indeks), state='readonly')
-        self.indeks_ent.grid(column=1, row=0)
+        self.new_lab = ttk.Label(self.wind, text='Nowy')
+        self.new_lab.grid(column=2, row=0)
 
-        self.n_indeks_lab = ttk.Label(self.wind, text='Nowy numer:')
-        self.n_indeks_lab.grid(column=0, row=1)
+        self.indeks_lab = ttk.Label(self.wind, text='numer:')
+        self.indeks_lab.grid(column=0, row=1)
+
+        self.indeks_old_lab = ttk.Label(self.wind, text=self.indeks_old)
+        self.indeks_old_lab.grid(column=1, row=1)
 
         self.n_indeks_var = StringVar()
         self.n_indeks_ent = ttk.Entry(self.wind, textvariable=self.n_indeks_var)
-        self.n_indeks_ent.grid(column=1, row=1)
+        self.n_indeks_ent.grid(column=2, row=1)
 
-        self.udt_lab = ttk.Label(self.wind, text='Obecny nr UDT:')
+        self.udt_lab = ttk.Label(self.wind, text='UDT:')
         self.udt_lab.grid(column=0, row=2)
 
-        self.udt_ent_var = StringVar()
-        self.udt_ent = ttk.Entry(self.wind, textvariable=self.udt_ent_var, state='readonly')
-        self.udt_ent.grid(column=1, row=2)
-
-        self.n_udt_lab = ttk.Label(self.wind, text='Nowy nr UDT:')
-        self.n_udt_lab.grid(column=0, row=3)
+        self.udt_old_lab = ttk.Label(self.wind, text=self.udt_old)
+        self.udt_old_lab.grid(column=1, row=2)
 
         self.n_udt_var = StringVar()
-        self.n_udt_ent = ttk.Entry(self.wind, textvariable=self.udt_ent_var)
-        self.n_udt_ent.grid(column=1, row=3)
+        self.n_udt_ent = ttk.Entry(self.wind, textvariable=self.n_udt_var)
+        self.n_udt_ent.grid(column=2, row=2)
 
-        self.nr_tank_lab = ttk.Label(self.wind, text='Obecny nr. zbiornika:')
-        self.nr_tank_lab.grid(column=0, row=4)
+        self.nr_tank_lab = ttk.Label(self.wind, text='Nr. zbiornika:')
+        self.nr_tank_lab.grid(column=0, row=3)
 
-        self.nr_tank_var = StringVar()
-        self.nr_tank_ent = ttk.Entry(self.wind, textvariable=self.nr_tank_var, state='readonly')
-        self.nr_tank_ent.grid(column=1, row=4)
-
-        self.n_nr_tank_lab = ttk.Label(self.wind, text='Nowy nr. zbiornika')
-        self.n_nr_tank_lab.grid(column=0, row=5)
+        self.tank_num_old_lab = ttk.Label(self.wind, text=self.tank_num_old)
+        self.tank_num_old_lab.grid(column=1, row=3)
 
         self.n_nr_tank_var = StringVar()
         self.n_nr_tank_ent = ttk.Entry(self.wind, textvariable=self.n_nr_tank_var)
-        self.n_nr_tank_ent.grid(column=1, row=5)
+        self.n_nr_tank_ent.grid(column=2, row=3)
 
-        self.type_lab = ttk.Label(self.wind, text='Obecny typ gaśnicy:')
-        self.type_lab.grid(column=0, row=6)
+        self.type_lab = ttk.Label(self.wind, text='Typ gaśnicy:')
+        self.type_lab.grid(column=0, row=4)
 
-        self.type_var = StringVar()
-        self.type_ent = ttk.Entry(self.wind, textvariable=self.type_var, state='readonly')
-        self.type_ent.grid(column=1, row=6)
-
-        self.n_type_lab = ttk.Label(self.wind, text='Nowy typ gaśnicy:')
-        self.n_type_lab.grid(column=0, row=7)
+        self.type_old_lab = ttk.Label(self.wind, text=self.type_old)
+        self.type_old_lab.grid(column=1, row=4)
 
         self.n_type_var = StringVar()
-        self.n_type_ent =ttk.Entry(self.wind, textvariable=self.n_type_var)
-        self.n_type_ent.grid(column=1, row=7)
+        self.n_type_ent = ttk.Entry(self.wind, textvariable=self.n_type_var)
+        self.n_type_ent.grid(column=2, row=4)
 
-        self.size_lab = ttk.Label(self.wind, text='Obecna pojemność:')
-        self.size_lab.grid(column=0, row=8)
+        self.size_lab = ttk.Label(self.wind, text='Pojemność:')
+        self.size_lab.grid(column=0, row=5)
 
-        self.size_var = StringVar()
-        self.size_ent = ttk.Entry(self.wind, textvariable=self.size_var, state='readonly')
-        self.size_ent.grid(column=1, row=8)
-
-        self.n_size_lab = ttk.Label(self.wind, text='Nowa pojemność:')
-        self.n_size_lab.grid(column=0, row=9)
+        self.size_old_lab = ttk.Label(self.wind, text=self.size_old)
+        self.size_old_lab.grid(column=1, row=5)
 
         self.n_size_var = StringVar()
         self.n_size_ent = ttk.Entry(self.wind, textvariable=self.n_size_var)
-        self.n_size_ent.grid(column=1, row=9)
+        self.n_size_ent.grid(column=2, row=5)
 
-        self.inside_lab = ttk.Label(self.wind, text='Obecny środek gaśniczy:')
-        self.inside_lab.grid(column=0, row=10)
+        self.inside_lab = ttk.Label(self.wind, text='Środek gaśniczy:')
+        self.inside_lab.grid(column=0, row=6)
 
-        self.inside_var = StringVar()
-        self.inside_ent = ttk.Entry(self.wind, textvariable=self.inside_var, state='readonly')
-        self.inside_ent.grid(column=1, row=10)
-
-        self.n_inside_lab = ttk.Label(self.wind, text='Nowy środek gaśniczy:')
-        self.n_inside_lab.grid(column=0, row=11)
+        self.inside_old_lab = ttk.Label(self.wind, text=self.inside_old)
+        self.inside_old_lab.grid(column=1, row=6)
 
         self.n_inside_var = StringVar()
         self.n_inside_ent = ttk.Entry(self.wind, textvariable=self.n_inside_var)
-        self.n_inside_ent.grid(column=1, row=11)
+        self.n_inside_ent.grid(column=2, row=6)
 
-        self.area_lab = ttk.Label(self.wind, text='Obecny Rejon:')
-        self.area_lab.grid(column=0, row=12)
+        self.area_lab = ttk.Label(self.wind, text='Rejon:')
+        self.area_lab.grid(column=0, row=7)
 
-        self.area_var = StringVar()
-        self.area_ent = ttk.Entry(self.wind, textvariable=self.area_var, state='readonly')
-        self.area_ent.grid(column=1, row=12)
-
-        self.n_area_lab = ttk.Label(self.wind, text='Nowy Rejon:')
-        self.n_area_lab.grid(column=0, row=13)
+        self.area_old_lab = ttk.Label(self.wind, text=self.area_old)
+        self.area_old_lab.grid(column=1, row=7)
 
         self.n_area_var = StringVar()
         self.n_area_ent = ttk.Entry(self.wind, textvariable=self.n_area_var)
-        self.n_area_ent.grid(column=1, row=13)
+        self.n_area_ent.grid(column=2, row=7)
 
-        self.localize_lab = ttk.Label(self.wind, text='Obecna lokalizacja:')
-        self.localize_lab.grid(column=0, row=14)
+        self.localize_lab = ttk.Label(self.wind, text='Lokalizacja:')
+        self.localize_lab.grid(column=0, row=8)
 
-        self.localize_var = StringVar()
-        self.localize_ent = ttk.Entry(self.wind, textvariable=self.localize_var, state='readonly')
-        self.localize_ent.grid(column=1, row=14)
-
-        self.n_localize_lab = ttk.Label(self.wind, text='Nowa lokalizacja:')
-        self.n_localize_lab.grid(column=0, row=15)
+        self.localize_old_lab = ttk.Label(self.wind, text=self.localize_old)
+        self.localize_old_lab.grid(column=1, row=8)
 
         self.n_localize_var = StringVar()
         self.n_localize_ent = ttk.Entry(self.wind, textvariable=self.n_localize_var)
-        self.n_localize_ent.grid(column=1, row=15)
+        self.n_localize_ent.grid(column=2, row=8)
 
-        self.controller_lab = ttk.Label(self.wind, text='Obecna osoba kontrolująca:')
-        self.controller_lab.grid(column=0, row=16)
+        self.controller_lab = ttk.Label(self.wind, text='Osoba kontrolująca:')
+        self.controller_lab.grid(column=0, row=9)
 
-        self.controller_var = StringVar()
-        self.controller_ent = ttk.Entry(self.wind, textvariable=self.controller_var, state='readonly')
-        self.controller_ent.grid(column=1, row=16)
-
-        self.n_controller_lab = ttk.Label(self.wind, text='Nowa osoba kontrolująca:')
-        self.n_controller_lab.grid(column=0, row=17)
+        self.person_old_lab = ttk.Label(self.wind, text=self.person_old)
+        self.person_old_lab.grid(column=1, row=9)
 
         self.n_controller_var = StringVar()
         self.n_controller_ent = ttk.Entry(self.wind, textvariable=self.n_controller_var)
-        self.n_controller_ent.grid(column=1, row=17)
+        self.n_controller_ent.grid(column=2, row=9)
 
-        self.data_lab = ttk.Label(self.wind, text='Obecna data kontroli:')
-        self.data_lab.grid(column=0, row=18)
+        self.data_lab = ttk.Label(self.wind, text='Data kontroli:')
+        self.data_lab.grid(column=0, row=10)
 
-        self.data_var = StringVar()
-        self.data_ent = ttk.Entry(self.wind, textvariable=self.data_var, state='readonly')
-        self.data_ent.grid(column=1, row=18)
-
-        self.n_data_lab = ttk.Label(self.wind, text='Nowa data kontroli:')
-        self.n_data_lab.grid(column=0, row=19)
+        self.data_old_lab = ttk.Label(self.wind, text=self.data_old)
+        self.data_old_lab.grid(column=1, row=10)
 
         self.n_data_var = StringVar()
         self.n_data_ent = ttk.Entry(self.wind, textvariable=self.n_data_var)
-        self.n_data_ent.grid(column=1, row=19)
+        self.n_data_ent.grid(column=2, row=10)
 
-
-
-
-
-
+        self.save_but = ttk.Button(self.wind, text='Zapisz', command= lambda: self.editing_rec(self.n_indeks_ent.get(),\
+                                                                                               self.indeks_old,\
+                                                                                               self.n_udt_ent.get(),\
+                                                                                               self.udt_old,\
+                                                                                               self.n_nr_tank_ent.get(),\
+                                                                                               self.tank_num_old,\
+                                                                                               self.n_type_ent.get(),\
+                                                                                               self.type_old,\
+                                                                                               self.n_size_ent.get(),\
+                                                                                               self.size_old,\
+                                                                                               self.n_inside_ent.get(),\
+                                                                                               self.inside_old,\
+                                                                                               self.n_area_ent.get(),\
+                                                                                               self.area_old,\
+                                                                                               self.n_localize_ent.get(),\
+                                                                                               self.localize_old,\
+                                                                                               self.n_controller_ent.get(),\
+                                                                                               self.person_old,\
+                                                                                               self.n_data_ent.get(),\
+                                                                                               self.data_old))
+        self.save_but.grid(column=0, row=11, columnspan=3)
 
         self.wind.mainloop()
 
