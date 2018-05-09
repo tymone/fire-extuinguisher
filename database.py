@@ -71,12 +71,14 @@ class Database:
 
     def deleting(self):
         try:
-            self.tree.item(self.tree.selection())['values'][1]
+            name = self.tree.item(self.tree.selection())['values'][0]
+            print(name)
         except IndexError as e:
             messagebox.showinfo('info', 'Nie wybrano przedmiotu. Zaznacz przedmiot i spróbuj ponownie.')
             return
 
-        name = self.tree.item(self.tree.selection())['values'][1]
+        name = self.tree.item(self.tree.selection())['values'][0]
+        print(name)
         query = 'DELETE FROM equipment WHERE indeks = ?'
         self.initialize_db_connection(query, (name, ))
         messagebox.showinfo('info', 'Przedmiot został usunięty.')
