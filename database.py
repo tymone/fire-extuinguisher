@@ -4,8 +4,8 @@
 import sqlite3
 import time
 import datetime
-import random
 from tkinter import messagebox
+from treeview import Treeview
 
 class Database:
     db_name = 'equipment.db'
@@ -33,19 +33,7 @@ class Database:
                              values=(row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
             cpt += 1
 
-    def validation(self):
-        return len(self.numEq_var.get()) != 0 \
-               or len(self.typeEQ_var.get()) != 0 \
-               or len(self.udt_var.get()) != 0 \
-               or len(self.tankNum_var.get()) !=0 \
-               or len(self.sizeEq_var.get()) != 0 \
-               or len(self.typeIn_var.get()) != 0 \
-               or len(self.area_var.get()) !=0 \
-               or len(self.localization_var.get()) !=0 \
-               or len(self.person_var.get()) != 0 \
-               or len(self.date_var.get() != 0)
-
-    def adding(self):
+    def add(self):
         if self.validation():
             query = 'INSERT INTO equipment VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
             parameters = (self.numEq_var.get(), self.udt_var.get(), self.tankNum_var.get(), self.typeEq_var.get(), \
@@ -63,13 +51,26 @@ class Database:
             self.localization_ent.delete (8, 8)
             self.person_ent.delete (9, 9)
             self.date_ent.delete (10, 10)
+            self.view_records()
 
         else:
             messagebox.showinfo('info', 'Nie wszystkie pola zostały wypełnione poprawnie.')
 
-        self.view_records()
+        
+        
+    def validation(self):
+        return len(self.numEq_var.get()) != 0 \
+               or len(self.typeEQ_var.get()) != 0 \
+               or len(self.udt_var.get()) != 0 \
+               or len(self.tankNum_var.get()) !=0 \
+               or len(self.sizeEq_var.get()) != 0 \
+               or len(self.typeIn_var.get()) != 0 \
+               or len(self.area_var.get()) !=0 \
+               or len(self.localization_var.get()) !=0 \
+               or len(self.person_var.get()) != 0 \
+               or len(self.date_var.get() != 0)
 
-    def deleting(self):
+    def delete(self):
         try:
             name = self.tree.item(self.tree.selection())['values'][0]
             print(name)
@@ -84,7 +85,7 @@ class Database:
         messagebox.showinfo('info', 'Przedmiot został usunięty.')
         self.view_records()
 
-    def editing(self):
+    def edit(self):
 
         self.indeks_old = self.tree.item(self.tree.selection())['values'][0]
         self.udt_old = self.tree.item(self.tree.selection())['values'][1]
@@ -97,7 +98,7 @@ class Database:
         self.person_old = self.tree.item(self.tree.selection())['values'][8]
         self.data_old = self.tree.item(self.tree.selection())['values'][9]
 
-    def editing_rec(self, n_indeks_var, indeks_old, n_udt_var, udt_old, n_nr_tank_var, tank_num_old, n_type_var,\
+    def edit_rec(self, n_indeks_var, indeks_old, n_udt_var, udt_old, n_nr_tank_var, tank_num_old, n_type_var,\
                     type_old, n_size_var, size_old, n_inside_var, inside_old, n_area_var, area_old, n_localize_var,\
                     localize_old, n_controller_var, person_old, n_data_var, data_old):
 
@@ -115,5 +116,21 @@ class Database:
 
         self.view_records()
 
+    def find(self):
+      records = self.tree.get_children()
+      for item in records:
+          self.tree.delete(item)
+      query = 'SELECT * FROM equipment WHERE indeks LIKE ?'
+      name = self.find_var.get()
+      db_rows = self.initialize_db_connection(query, (name,))
+      cpt = 1
+      for row in db_rows:
+        self.tree.insert('', 'end', text=str(cpt),
+          values=(row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
+        cpt += 1
+    
+
+    
+        
 
 
